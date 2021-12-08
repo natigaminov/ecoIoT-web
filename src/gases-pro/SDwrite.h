@@ -6,9 +6,9 @@
 #include "toggle.h"
 
 class SDwrite {
-  protected:
+  private:
     uint8_t sd_answer;
-    char filename[20];  
+    char filename[20];
   public:
     SDwrite();
     void createFile();
