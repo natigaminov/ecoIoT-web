@@ -2,10 +2,16 @@
 #include "SDwrite.h"
 
 /*
- * Переключатель моделей - файл toggle.h
+ * Переключатель моделей - в файле toggle.h
+ *
+ * Данный проект построен с использованием условной компиляции (https://clck.ru/ZEjah)
+ * для простоты переключения между наборами датчиков (моделями) без лишнего кода в памяти платы
+ * Если у вас есть время реализовать переключение через ООП без лишнего расхода памяти, то будем рады вашим пул реквестам
  */
 
+// пауза для первого включения - нужна для нагрева сенсоров CH4 (1 минута) и CO2 (2 минуты) после включения
 byte delay_warm_up = 02;
+// пауза для рабочего режима - нужна для частоты измерений 1 раз в минуту
 byte delay_work = 01;
 char time_delay[20];
 
@@ -22,14 +28,7 @@ void setup() {
 }
 
 void loop() {
-  /* 
-   * Gas sensors needs a warm up time at least 120 seconds  
-   * To reduce the battery consumption, use deepSleep instead delay
-   * After 2 minutes, Waspmote wakes up thanks to the RTC Alarm
-   * PWR.deepSleep("00:00:02:00", RTC_OFFSET, RTC_ALM1_MODE1, ALL_ON);
-  */
-  WPM.getGasValues();
-  WPM.getMeteoValues();
-  PWR.deepSleep(time_delay, RTC_OFFSET, RTC_ALM1_MODE1, ALL_ON);
+  WPM.getMeasurements();
   SDW.writeToFile();
+  PWR.deepSleep(time_delay, RTC_OFFSET, RTC_ALM1_MODE1, ALL_ON);
 }
