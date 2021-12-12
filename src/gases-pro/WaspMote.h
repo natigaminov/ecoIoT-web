@@ -6,6 +6,7 @@
 class WaspMote {
   protected:
     void convGasValues();
+    float ppmToMgm(float ppm, float molar, float temp, float pres);
   public:
     #ifdef MODEL_GREEN
     Gas gas_sensor_CO{SOCKET_A};
@@ -30,7 +31,7 @@ class WaspMote {
     char temperature[20];
     char humidity[20];
     char pressure[20];
-    float temp, hum, press;
+    float temp, hum, pres;
 
     WaspMote();
     void turnGasON();

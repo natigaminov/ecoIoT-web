@@ -34,6 +34,11 @@ void WaspMote::turnGasOFF() {
   #endif
 }
 
+float WaspMote::ppmToMgm(float ppm, float molar, float temp, float pres) {
+  float mgm = ppm * (molar / 22.4) * (273 / (273 + temp)) * (pres * 10 / 1013);
+  return mgm;
+}
+
 /*
  * Конвертация значений сенсоров из ppm в мг/м3 и перевод в строковый тип
  * Данный метод класса WaspMote является protected, т.к. идет в жесткой связке после метода
@@ -43,20 +48,20 @@ void WaspMote::turnGasOFF() {
  * метод-враппер getMeasurements()
  */
 void WaspMote::convGasValues() {
-  float coeff1 = 0.12 * 0.001 * press;
-  float coeff2 = (273 + temp);
   #ifdef MODEL_GREEN
-  conv_CO = coeff1 * (gas_sensor_CO.getConc() * 28.01) / coeff2;
-  conv_NO = coeff1 * (gas_sensor_NO.getConc() * 30.01) / coeff2;
-  conv_CO2 = coeff1 * (gas_sensor_NO.getConc() * 44.01) / coeff2;
-  conv_NO2 = coeff1 * (gas_sensor_NO.getConc() * 46.0055) / coeff2;
+  conv_CO = ppmToMgm(gas_sensor_CO.getConc(), 28.01, temp, pres);
+  conv_NO = ppmToMgm(gas_sensor_NO.getConc(), 30.01, temp, pres);
+  conv_CO2 = ppmToMgm(gas_sensor_CO2.getConc(), 44.01, temp, pres);
+  conv_NO2 = ppmToMgm(gas_sensor_NO2.getConc(), 46.0055, temp, pres);
   Utils.float2String(conv_CO, concentration_CO, 10);
   Utils.float2String(conv_NO, concentration_NO, 10);
   Utils.float2String(conv_CO2, concentration_CO2, 10);
   Utils.float2String(conv_NO2, concentration_NO2, 10);
   #elif defined MODEL_BLUE
-  conv_NH3 = coeff1 * (gas_sensor_NH3.getConc() * 17.031) / coeff2;
-  conv_H2S = coeff1 * (gas_sensor_H2S.getConc() * 34.1) / coeff2;
+  conv_NH3 = ppmToMgm(gas_sensor_NH3.getConc(), 17.031, temp, pres);
+  conv_H2S = ppmToMgm(gas_sensor_H2S.getConc(), 34.08, temp, pres);
+  conv_CH4 = ppmToMgm(gas_sensor_CH4.getConc(), 16.04, temp, pres);
+
   conv_CH4 = coeff1 * (10000 * gas_sensor_CH4.getConc() * 16.04) / coeff2;
   Utils.float2String(conv_NH3, concentration_NH3, 10);
   Utils.float2String(conv_H2S, concentration_H2S, 10);
@@ -85,10 +90,10 @@ void WaspMote::turnMeteON() {
 void WaspMote::getMeteoValues() {
   temp = bme.getTemperature();
   hum = bme.getHumidity();
-  press = bme.getPressure();
+  pres = bme.getPressure();
   Utils.float2String(temp, temperature, 6);
   Utils.float2String(hum, humidity, 6);
-  Utils.float2String(press, pressure, 6);
+  Utils.float2String(pres, pressure, 6);
 }
 
 // создаем объект класса заранее
