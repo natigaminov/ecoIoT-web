@@ -6,10 +6,11 @@
 #include "toggle.h"
 
 class SDwrite {
-  private:
-    uint8_t sd_answer;
-    char filename[20];
   public:
+    uint8_t sd_answer;
+    char filename[13];
+    char writetime[20];
+    
     SDwrite();
     void createFile();
     void writeToFile();

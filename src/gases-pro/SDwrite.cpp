@@ -12,32 +12,31 @@
 SDwrite::SDwrite(){}
 
 void SDwrite::createFile() {
-  USB.print(F("Time: "));
-  USB.println(RTC.getTime());
-  sprintf(filename, "%02u%02u%02u.csv", RTC.date, RTC.hour, RTC.minute);
+  RTC.getTime();
+  sprintf(filename, "%02u%02u%02u%02u.csv", RTC.month, RTC.date, RTC.hour, RTC.minute);
   if(SD.create(filename)) {
     USB.print(F("File created: "));
     USB.println(filename);
+    sd_answer = SD.append(filename, "Time,Temp,Hum,Press,");
+    if(sd_answer == 1){
+      USB.println(F("\nData saved"));
+    }else{
+      USB.println(F("\nAppend data error!"));
+    }
+    #ifdef MODEL_GREEN
+    SD.appendln(filename, "CO,NO,CO2,NO2");
+    #elif defined MODEL_BLUE
+    SD.appendln(filename, "NH3,H2S,CH4");
+    #endif
   }else{
     USB.println(F("File NOT created"));
   }
 }
 
 void SDwrite::writeToFile() {
-  sd_answer = SD.append(filename, "Time,Temp,Hum,Press,");
-  if( sd_answer == 1 ){
-    USB.println(F("\nData saved"));
-  }else{
-    USB.println(F("\nAppend data error!"));
-  }
-
-  #ifdef MODEL_GREEN
-  SD.appendln(filename, "CO,NO,CO2,NO2");
-  #elif defined MODEL_BLUE
-  SD.appendln(filename, "NH3,H2S,CH4");
-  #endif
-
-  SD.append(filename, RTC.getTime());
+  RTC.getTime();
+  sprintf(writetime, "20%02u-%02u-%02u %02u:%02u:%02u", RTC.year, RTC.month, RTC.date, RTC.hour, RTC.minute, RTC.second);
+  SD.append(filename, writetime);
   SD.append(filename, ",");
   SD.append(filename, WPM.temperature);
   SD.append(filename, ",");
