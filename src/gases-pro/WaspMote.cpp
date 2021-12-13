@@ -60,9 +60,7 @@ void WaspMote::convGasValues() {
   #elif defined MODEL_BLUE
   conv_NH3 = ppmToMgm(gas_sensor_NH3.getConc(), 17.031, temp, pres);
   conv_H2S = ppmToMgm(gas_sensor_H2S.getConc(), 34.08, temp, pres);
-  conv_CH4 = ppmToMgm(gas_sensor_CH4.getConc(), 16.04, temp, pres);
-
-  conv_CH4 = coeff1 * (10000 * gas_sensor_CH4.getConc() * 16.04) / coeff2;
+  conv_CH4 = ppmToMgm(10000 * gas_sensor_CH4.getConc(), 16.04, temp, pres);
   Utils.float2String(conv_NH3, concentration_NH3, 10);
   Utils.float2String(conv_H2S, concentration_H2S, 10);
   Utils.float2String(conv_CH4, concentration_CH4, 10);
