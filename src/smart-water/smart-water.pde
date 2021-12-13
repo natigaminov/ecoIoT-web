@@ -39,11 +39,6 @@ pHClass pHSensor;
 conductivityClass conductivitySensor;
 DOClass DOSensor;
 
-// For writting to SD
-uint8_t sd_answer;
-char smth[20];
-char filename[23];
-
 void setup()
 {
   // Open USB port
