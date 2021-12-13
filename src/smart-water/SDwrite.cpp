@@ -13,11 +13,14 @@ SDwrite::SDwrite(){}
 
 void SDwrite::createFile() {
   RTC.getTime();
-  sprintf(filename, "%02u%02u%02u%02u.csv", RTC.month, RTC.date, RTC.hour, RTC.minute);
-  if(SD.create(filename)) {
+  sprintf(foldername, "%02u-%02u-%02u", RTC.year, RTC.month, RTC.date);
+  SD.mkdir(foldername);
+  sprintf(filename, "%02u-%02u-%02u.csv", RTC.hour, RTC.minute, RTC.second);
+  sprintf(filepath, "%s/%s", foldername, filename);
+  if(SD.create(filepath)) {
     USB.print(F("File created: "));
-    USB.println(filename);
-    sd_answer = SD.appendln(filename, "Time,Temp,pH Estimated,Conductivity,DO Percent");
+    USB.println(filepath);
+    sd_answer = SD.appendln(filepath, "Time,Temp,pH Estimated,Conductivity,DO Percent");
     if(sd_answer == 1){
       USB.println(F("\nData saved"));
     }else{
@@ -31,17 +34,17 @@ void SDwrite::createFile() {
 void SDwrite::writeToFile(char temp[20], char pHValue[20], char ECValue[20], char DOValue[20]) {
   RTC.getTime();
   sprintf(writetime, "20%02u-%02u-%02u %02u:%02u:%02u", RTC.year, RTC.month, RTC.date, RTC.hour, RTC.minute, RTC.second);
-  SD.append(filename, writetime);
-  SD.append(filename, ",");
-  SD.append(filename, temp);
-  SD.append(filename, ",");
-  SD.append(filename, pHValue);
-  SD.append(filename, ",");
-  SD.append(filename, ECValue);
-  SD.append(filename,",");
-  SD.appendln(filename, DOValue);
+  SD.append(filepath, writetime);
+  SD.append(filepath, ",");
+  SD.append(filepath, temp);
+  SD.append(filepath, ",");
+  SD.append(filepath, pHValue);
+  SD.append(filepath, ",");
+  SD.append(filepath, ECValue);
+  SD.append(filepath,",");
+  SD.appendln(filepath, DOValue);
 
-  // SD.showFile(filename);
+  // SD.showFile(filepath);
 }
 
 SDwrite SDW = SDwrite();
