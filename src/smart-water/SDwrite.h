@@ -12,8 +12,7 @@ class SDwrite {
     char writetime[20];
   public:
     SDwrite();
-    void createFolder();
-    void createFile(char foldername[13]);
+    void createFile();
     void writeToFile(char temp[20], char pHValue[20], char ECValue[20], char DOValue[20]);
 };
 
