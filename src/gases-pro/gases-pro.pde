@@ -36,7 +36,7 @@ void setup() {
   SDW.createFile();
   USB.println(F("Warm up delay..."));
   //PWR.deepSleep(time_delay, RTC_OFFSET, RTC_ALM1_MODE1, ALL_ON); // пока что это не работает и мы не знаем почему
-  delay(delay_warm_up * 60 * 1000);                                // так что довольствуемся этим
+  delay(delay_warm_up * 60000);                                // так что довольствуемся этим
   sprintf(time_delay, "00:00:0%d:00", delay_work);
 }
 
@@ -44,5 +44,5 @@ void loop() {
   WPM.getMeasurements();
   SDW.writeToFile();
   //PWR.deepSleep("00:00:00:10", RTC_OFFSET, RTC_ALM1_MODE1, ALL_OFF); // пока что это не работает и мы не знаем почему
-  delay(delay_work * 60 * 1000);                                       // так что довольствуемся этим
+  delay(delay_work * 60000);                                       // так что довольствуемся этим
 }
