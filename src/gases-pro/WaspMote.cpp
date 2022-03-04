@@ -35,7 +35,7 @@ void WaspMote::turnGasOFF() {
 }
 
 float WaspMote::ppmToMgm(float ppm, float molar, float temp, float pres) {
-  float mgm = ppm * (molar / 22.4) * (273 / (273 + temp)) * (pres * 10 / 1013);
+  float mgm = ppm * (molar / 22.4) * (273 / (273 + temp)) * (pres / 101300);
   return mgm;
 }
 
