@@ -1,6 +1,9 @@
 /* 
- * Для переключения модуля нужно раскомментировать / закомментировать эти макросы:
+ * Для переключения модуля нужно поменять объявления макросов
  */
 
-#define MODEL_GREEN
-//#define MODEL_BLUE
+#if true // чтобы было MODEL_BLUE надо поставить false 
+  #define MODEL_GREEN
+#else
+  #define MODEL_BLUE
+#endif
