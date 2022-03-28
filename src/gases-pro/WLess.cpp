@@ -41,30 +41,41 @@ int WLess::ftpCloseSession(){
 }
 
 void WLess::ftpUpload(char* serv_filename, char* loc_filename){
-    int err;
-    if(ftpOpenSession()){
-        USB.println(F("FTP open session OK"));
-        ftp_previous_time = millis();
-
-        err = _4G.ftpUpload(serv_filename, loc_filename);
-        if (err == 0) {
-            USB.print(F("Uploading SD file to FTP server done! "));
-            USB.print(F("Upload time: "));
-            USB.print((millis() - ftp_previous_time) / 1000, DEC);
-            USB.println(F(" s"));
+    int err = _4G.ON();
+    if(err == 0){
+        err = ftpOpenSession();
+        if(err == 0){
+            USB.println(F("FTP open session OK"));
+            ftp_previous_time = millis();
+            err = _4G.ftpUpload(serv_filename, loc_filename);
+            if (err == 0) {
+                USB.print(F("Uploading SD file to FTP server done! "));
+                USB.print(F("Upload time: "));
+                USB.print((millis() - ftp_previous_time) / 1000, DEC);
+                USB.println(F(" s"));
+            }else{
+                USB.print(F("Error calling 'ftpUpload' function. Error: "));
+                USB.println(err, DEC);
+            }
+            err = ftpCloseSession();
+            if(err == 0){
+                USB.println(F("FTP close session OK"));
+            }else{
+                USB.print(F("Error calling 'ftpCloseSession' function. error: "));
+                USB.println(err, DEC);
+                USB.print(F("CMEE error: "));
+                USB.println(_4G._errorCode, DEC);
+            }
         }else{
-            USB.print(F("Error calling 'ftpUpload' function. Error: "));
+            USB.print(F( "FTP connection error: "));
             USB.println(err, DEC);
         }
+    }else{
+        USB.println(F("4G module not started"));
+        return;
     }
-
-    if(ftpCloseSession()){
-        USB.println(F("FTP close session OK"));
-        USB.print(F("Error calling 'ftpCloseSession' function. error: "));
-        USB.println(err, DEC);
-        USB.print(F("CMEE error: "));
-        USB.println(_4G._errorCode, DEC);
-    }
+    USB.println(F("Switch OFF 4G module"));
+    _4G.OFF();
 }
 
 WLess WLS = WLess();
