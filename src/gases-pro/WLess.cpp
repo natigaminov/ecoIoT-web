@@ -10,16 +10,129 @@ void WLess::init_Network(char* apn_a, char* login_a, char* password_a){
 }
 
 void WLess::setTimeFrom4G(){
-    uint8_t err = _4G.setTimeFrom4G();
-    if (err == 1) {
-        USB.println(F("Error! Set RTC via 4G"));
+    int err = _4G.ON();
+    if(err == 0){
+        err = _4G.setTimeFrom4G();
+        if (err == 1) {
+            USB.println(F("Error! Set RTC via 4G"));
+        }else{
+            USB.println(F("Done! Set RTC via 4G"));
+        } 
     }else{
-        USB.println(F("Done! Set RTC via 4G"));
+        USB.println(F("4G module not started (setTimeFrom4G)"));
+        return;
     }
+    _4G.OFF();
 }
 
 void WLess::show_APN(){
     _4G.show_APN();
+}
+
+void WLess::check_Net(){
+    USB.println(F("Network checked:"));
+    int err = _4G.ON();
+    if(err == 0){
+        USB.print(F("1. Connection state: "));
+        connection_state = _4G.checkDataConnection(30);
+        if(connection_state == 0){
+            USB.println(F("Module connected to network"));
+        }else{
+            switch(connection_state){
+                case 1:
+                    USB.println(F("Not registered, ME is not currently searching for a new operator to register to"));
+                    break;
+                case 2:
+                    USB.println(F("Not registered, but ME is currently searching for a new operator to register to"));
+                    break;
+                case 3:
+                    USB.println(F("Registration denied"));
+                    break;
+                case 4:
+                    USB.println(F("Unknown"));
+                    break;
+                case 6:
+                    USB.println(F("Not registered, ME is not currently searching for a new operator to register to"));
+                    break;
+                case 8:
+                    USB.println(F("Not registered, but ME is currently searching for a new operator to register to"));
+                    break;
+                case 9:
+                    USB.println(F("Registration denied"));
+                    break;
+                case 10:
+                    USB.println(F("Unknown"));
+                    break;
+                case 12:
+                    USB.println(F("Error setting APN"));
+                    break;
+                case 13:
+                    USB.println(F("Error setting login"));
+                    break;
+                case 14:
+                    USB.println(F("Error setting password"));
+                    break;
+                case 15:
+                    USB.println(F("Error activating GPRS connection"));
+                    break;
+            }
+        }
+    }else{
+        USB.print(F("4G module not started (check_Net): "));
+        switch(err){
+            case 1:
+                USB.println(F("No comunication"));
+                break;
+            case 2:
+                USB.println(F("Error switching CME errors to numeric response"));
+                break;
+            case 3:
+                USB.println(F("Error disabling the echo from the module"));
+                break;
+            case 4:
+                USB.println(F("Error enabling RTC update with network time"));
+                break;
+        }
+    }
+    USB.print(F("Network type: "));
+    net_type = _4G.getNetworkType();
+    switch(net_type){
+      case 0:
+          USB.println(F("GPRS"));
+          break;
+      case 1:
+          USB.println(F("EGPRS"));
+          break;
+      case 2:
+          USB.println(F("WCDMA"));
+          break;
+      case 3:
+          USB.println(F("HSDPA"));
+          break;
+      case 4:
+          USB.println(F("LTE"));
+          break;
+      case 5:
+          USB.println(F("Unknown or not registered"));
+          break;
+      case -1:
+          USB.println(F("Error"));
+          break;
+    }
+    USB.print(F("Network operator: "));
+    memset(operator_name, '\0', sizeof(operator_name));
+    err = _4G.getOperator(operator_name);
+    if(err != 0){
+        USB.println(F("Error get network operator!"));
+    }else{
+        USB.print(F("Operator: "));
+        USB.println(operator_name);
+    }
+    USB.print(F("RSSI: "));
+    rssi_lv = _4G._rssi;
+    USB.print(rssi_lv, DEC);
+    USB.println(F(" dBm"));
+    _4G.OFF();
 }
 
 void WLess::init_FTP(char* ftp_server_a, uint16_t ftp_port_a, char* ftp_user_a, char* ftp_pass_a){
@@ -71,10 +184,9 @@ void WLess::ftpUpload(char* serv_filename, char* loc_filename){
             USB.println(err, DEC);
         }
     }else{
-        USB.println(F("4G module not started"));
+        USB.println(F("4G module not started (ftpUpload)"));
         return;
     }
-    USB.println(F("Switch OFF 4G module"));
     _4G.OFF();
 }
 
