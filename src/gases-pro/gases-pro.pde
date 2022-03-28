@@ -13,12 +13,31 @@
 byte delay_warm_up = 2;
 // пауза для рабочего режима - нужна для частоты измерений 1 раз в минуту
 byte delay_work = 1;
+byte newfile_period = 20; // период, через который создается новый файл с данными (в минутах)
 char time_delay[20];
+
+// APN settings
+char apn[] = "";
+char login[] = "";
+char password[] = "";
+
+// SERVER settings
+char ftp_server[] = "";
+uint16_t ftp_port = 21;
+char ftp_user[] = "";
+char ftp_pass[] = "";
+
+unsigned long timer;
+
 
 void setup() {
   USB.ON();
   SD.ON();
   RTC.ON();
+  WLS.init_Network(apn, login, password);
+  WLS.init_FTP(ftp_server, ftp_port, ftp_user, ftp_pass);
+  timer = millis();
+  
   USB.print(F("Time: "));
   USB.println(RTC.getTime());
   USB.print("Battery level: ");
@@ -35,14 +54,20 @@ void setup() {
   WPM.turnGasON();
   SDW.createFile();
   USB.println(F("Warm up delay..."));
-  //PWR.deepSleep(time_delay, RTC_OFFSET, RTC_ALM1_MODE1, ALL_ON); // пока что это не работает и мы не знаем почему
-  delay(delay_warm_up * 60000);                                // так что довольствуемся этим
+// PWR.deepSleep(time_delay, RTC_OFFSET, RTC_ALM1_MODE1, ALL_ON);
+  delay(delay_warm_up * 60000);
   sprintf(time_delay, "00:00:0%d:00", delay_work);
 }
 
 void loop() {
+  WLS.setTimeFrom4G();
   WPM.getMeasurements();
   SDW.writeToFile();
-  //PWR.deepSleep("00:00:00:10", RTC_OFFSET, RTC_ALM1_MODE1, ALL_OFF); // пока что это не работает и мы не знаем почему
-  delay(delay_work * 60000);                                       // так что довольствуемся этим
+// PWR.deepSleep("00:00:00:10", RTC_OFFSET, RTC_ALM1_MODE1, ALL_OFF);
+  delay(delay_work * 60000);
+
+  if(millis() - timer > newfile_period * 60000) {
+    WLS.ftpUpload(SDW.getFilname(), SDW.getFilname());
+    SDW.createFile();
+  }
 }
