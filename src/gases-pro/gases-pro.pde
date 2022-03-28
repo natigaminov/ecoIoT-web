@@ -14,7 +14,7 @@
 #define DELAY_WARM_UP 2
 // пауза для рабочего режима - нужна для частоты измерений 1 раз в минуту
 #define DELAY_WORK 1
-#define NEWFILE_PERIOD 10 // период, через который создается новый файл с данными (в минутах)
+#define COUNT_MEASURE_FOR_SYNC 10 // количество измерений, через которое произойдет отправка локального файла на FTP сервер и создание нового лок.файла
 char time_delay[20];
 
 // APN settings
@@ -28,8 +28,8 @@ uint16_t ftp_port = 21;
 char ftp_user[] = "";
 char ftp_pass[] = "";
 
-// Таймер для периодического создания нового файла и отправки его по FTP на сервер
-unsigned long timer;
+// Счетчик для периодической отправки файла по FTP на сервер и создания нового файла
+byte counter_sync = 1;
 
 
 void setup() {
@@ -38,7 +38,7 @@ void setup() {
   RTC.ON();
   WLS.init_Network(apn, login, password);
   WLS.init_FTP(ftp_server, ftp_port, ftp_user, ftp_pass);
-  timer = millis();
+  WLS.setTimeFrom4G();
   
   USB.print(F("Time: "));
   USB.println(RTC.getTime());
@@ -62,15 +62,16 @@ void setup() {
 }
 
 void loop() {
-  WLS.setTimeFrom4G();
   WPM.getMeasurements();
   SDW.writeToFile();
 // PWR.deepSleep("00:00:00:10", RTC_OFFSET, RTC_ALM1_MODE1, ALL_OFF);
-  delay(DELAY_WORK * 60000);
 
-  if(millis() - timer >= NEWFILE_PERIOD * 60000) {
+  if(counter == COUNT_MEASURE_FOR_SYNC) {
+    WLS.setTimeFrom4G();
     WLS.ftpUpload(SDW.getFilename(), SDW.getFilename());
     SDW.createFile();
-    timer = millis();
+    counter = 1;
   }
+  counter++;
+  delay(DELAY_WORK * 60000);
 }
