@@ -1,6 +1,7 @@
-#include "Wasp4G.h"
-#include "WaspMote.h"
-#include "SDwrite.h"
+#include <WaspUSB.h>
+#include <WaspSD.h>
+#include <WaspOneWire.h>
+#include <Wasp4G.h>
 #include "toggle.h"
 
 class WLess {
@@ -14,7 +15,7 @@ class WLess {
     char* ftp_user;
     char* ftp_pass;
     uint32_t ftp_previous_time;
-
+    
     WLess();
     void setTimeFrom4G();
     void init_Network(char* apn_a, char* login_a, char* password_a);
