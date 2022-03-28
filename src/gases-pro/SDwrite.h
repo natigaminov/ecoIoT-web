@@ -16,6 +16,7 @@ class SDwrite {
     SDwrite();
     void createFile();
     void writeToFile();
+    char* getFilename();
 };
 
 extern SDwrite SDW;
