@@ -12,9 +12,9 @@ void WLess::init_Network(char* apn_a, char* login_a, char* password_a){
 void WLess::setTimeFrom4G(){
     uint8_t err = _4G.setTimeFrom4G();
     if (err == 1) {
-        printf("Error! Set RTC via 4G");
+        USB.println(F("Error! Set RTC via 4G"));
     }else{
-        printf("Done! Set RTC via 4G");
+        USB.println(F("Done! Set RTC via 4G"));
     }
 }
 
@@ -36,7 +36,7 @@ int WLess::ftpOpenSession(){
 }
 
 int WLess::ftpCloseSession(){
-    int err = ftpCloseSession();
+    int err = _4G.ftpCloseSession();
     return err;
 }
 

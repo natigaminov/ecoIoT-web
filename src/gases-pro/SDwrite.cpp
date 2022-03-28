@@ -70,6 +70,4 @@ char* SDwrite::getFilename() {
   return filename;
 }
 
-
-
 SDwrite SDW = SDwrite();
