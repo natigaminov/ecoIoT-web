@@ -66,12 +66,12 @@ void loop() {
   SDW.writeToFile();
 // PWR.deepSleep("00:00:00:10", RTC_OFFSET, RTC_ALM1_MODE1, ALL_OFF);
 
-  if(counter == COUNT_MEASURE_FOR_SYNC) {
+  if(counter_sync == COUNT_MEASURE_FOR_SYNC) {
     WLS.setTimeFrom4G();
     WLS.ftpUpload(SDW.getFilename(), SDW.getFilename());
     SDW.createFile();
-    counter = 1;
+    counter_sync = 1;
   }
-  counter++;
+  counter_sync++;
   delay(DELAY_WORK * 60000);
 }
