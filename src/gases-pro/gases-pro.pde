@@ -18,7 +18,7 @@
 char time_delay[20];
 
 // APN settings
-char apn[] = "internet.megafon";
+char apn[] = "";
 char login[] = "";
 char password[] = "";
 
