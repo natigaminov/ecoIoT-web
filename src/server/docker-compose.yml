@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  postgresql:
+    image: postgres:14.4
+    container_name: ecoiot_postgresql
+    restart: "no"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer:4.8.1
+    container_name: ecoiot_postgresql_adminer
+    restart: "no"
+    environment:
+      ADMINER_DEFAULT_SERVER: ecoiot_postgresql
+      ADMINER_DESIGN: pepa-linha
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+  
+  # ecoiot_server:
+  #   image: ecoiot_server
+  #   container_name: ecoiot_server
+  #   build: .
+  #   volumes:
+  #     - .:/service
+  #   depends_on:
+  #     postgresql:
+  #       condition: service_healthy
+  #   ports:
+  #     - "8085:8080"
