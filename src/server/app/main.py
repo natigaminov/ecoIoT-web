@@ -15,7 +15,7 @@ app.include_router(gases)
 
 
 def main() -> None:
-    asyncio.run(
+    asyncio.run( # для запуска нескольких инициализации баз используй asyncio.gather() (https://docs.python.org/3/library/asyncio-task.html#asyncio.gather)
         init_database(
             db_name=settings.gases_database_name,
             db_folder="app/libs/postgresql/gases_database"

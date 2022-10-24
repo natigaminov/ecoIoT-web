@@ -16,6 +16,8 @@ class MeasureRepository:
         self.gases_db_name = settings.gases_database_name
     
     async def set_oxide_measures(self, measures: dict):
+        """Записывает данные в таблицу 'oxides'
+        """
         async with self.sessions[self.gases_db_name]() as db:
             db: AsyncSession
             oxides = Oxide(**measures)
@@ -23,6 +25,8 @@ class MeasureRepository:
             await db.commit()
 
     async def set_hydride_measures(self, measures: dict):
+        """Записывает данные в таблицу 'hydrides'
+        """
         async with self.sessions[self.gases_db_name]() as db:
             db: AsyncSession
             hydride = Hydride(**measures)

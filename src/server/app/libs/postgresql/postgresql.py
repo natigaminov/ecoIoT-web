@@ -8,6 +8,9 @@ from app.settings import settings
 
 
 class PostgreSQL:
+    """Синглтон класс, хранящий в себе подключения для всех БД, т.е.
+    словарями хранит `engines` и `sessionmakers`, где ключи это имена БД
+    """
     __instance = None
     
     def __new__(cls, *args, **kwargs):
@@ -38,6 +41,8 @@ class PostgreSQL:
         return self.sessionmakers
     
     async def create_database(self, db_name: str):
+        """Создает новую БД
+        """
         try:
             async with self.sessionmakers["postgres"]() as db:
                 await db.execute("COMMIT")

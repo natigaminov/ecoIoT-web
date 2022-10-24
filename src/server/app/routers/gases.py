@@ -8,10 +8,10 @@ from app.repositories.measure import MeasureRepository
 
 
 gases = APIRouter(
-    prefix=f"/{settings.gases_database_name}",
+    prefix=f"/{settings.gases_database_name}", # каждый роутер для своей БД
     tags=[settings.gases_database_name]
 )
-endpoint_responses={
+endpoint_responses={ # нужны для отображения в документации
     status.HTTP_200_OK: {"model": SuccessfulResponse},
     status.HTTP_403_FORBIDDEN: {"model": ForbiddenResponse}
 }
@@ -33,10 +33,12 @@ async def oxides(
     no2: float = Form(),
     measure: MeasureRepository = Depends()
 ):
+    """Принимает данные для записи в таблицу `oxides`
+    """
     if api_token == settings.api_access_token:
-        kwargs = locals()
-        kwargs["time"] = kwargs["time"].replace(tzinfo=None) if kwargs["time"] else None
-        measures = {key:kwargs[key] for key in kwargs if key not in ["api_token", "measure"]}
+        kwargs = locals() # возвращает словарь аргументов функции роута
+        kwargs["time"] = kwargs["time"].replace(tzinfo=None) if kwargs["time"] else None # убираем часовой пояс во времени
+        measures = {key:kwargs[key] for key in kwargs if key not in ["api_token", "measure"]} # убираем лишние элементы
 
         await measure.set_oxide_measures(measures)
     else:
@@ -66,6 +68,8 @@ async def hydrides(
     ch4: float = Form(),
     measure: MeasureRepository = Depends()
 ):
+    """Принимает данные для записи в таблицу `hydrides`
+    """
     if api_token == settings.api_access_token:
         kwargs = locals()
         kwargs["time"] = kwargs["time"].replace(tzinfo=None) if kwargs["time"] else None
