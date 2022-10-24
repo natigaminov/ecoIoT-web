@@ -13,14 +13,17 @@ app = FastAPI(
 )
 app.include_router(gases)
 
-
-def main() -> None:
-    asyncio.run( # для запуска нескольких инициализации баз используй asyncio.gather() (https://docs.python.org/3/library/asyncio-task.html#asyncio.gather)
+async def prepare_dbms():
+    await asyncio.gather(
         init_database(
             db_name=settings.gases_database_name,
             db_folder="app/libs/postgresql/gases_database"
         )
     )
+
+
+def main() -> None:
+    asyncio.run(prepare_dbms())
 
     run(
         app,
