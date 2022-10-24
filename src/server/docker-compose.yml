@@ -6,8 +6,8 @@ services:
     container_name: ecoiot_postgresql
     restart: "no"
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${dbms_admin_login}
+      POSTGRES_PASSWORD: ${dbms_admin_pwd}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 10s
@@ -27,16 +27,16 @@ services:
       postgresql:
         condition: service_healthy
     ports:
-      - 8080:8080
+      - 8085:8080
   
-  # ecoiot_server:
-  #   image: ecoiot_server
-  #   container_name: ecoiot_server
-  #   build: .
-  #   volumes:
-  #     - .:/service
-  #   depends_on:
-  #     postgresql:
-  #       condition: service_healthy
-  #   ports:
-  #     - "8085:8080"
+  ecoiot_server:
+    image: ecoiot_server
+    container_name: ecoiot_server
+    build: .
+    volumes:
+      - .:/service
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    ports:
+      - "8090:8080"

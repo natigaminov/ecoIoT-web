@@ -1,6 +1,5 @@
 # coding: utf-8
-from sqlalchemy import Column, DateTime, Float, text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, DateTime, Float, Integer, text
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -10,7 +9,7 @@ metadata = Base.metadata
 class Hydride(Base):
     __tablename__ = 'hydrides'
 
-    id = Column(UUID, primary_key=True)
+    id = Column(Integer, primary_key=True, server_default=text("nextval('hydrides_id_seq'::regclass)"))
     time = Column(DateTime, nullable=False, server_default=text("now()"))
     temperature = Column(Float(53))
     humidity = Column(Float(53))
@@ -23,7 +22,7 @@ class Hydride(Base):
 class Oxide(Base):
     __tablename__ = 'oxides'
 
-    id = Column(UUID, primary_key=True)
+    id = Column(Integer, primary_key=True, server_default=text("nextval('oxides_id_seq'::regclass)"))
     time = Column(DateTime, nullable=False, server_default=text("now()"))
     temperature = Column(Float(53))
     humidity = Column(Float(53))

@@ -1,5 +1,5 @@
-CREATE TABLE IF NOT EXISTS "oxides" (
-  "id" uuid PRIMARY KEY,
+CREATE TABLE "oxides" (
+  "id" SERIAL PRIMARY KEY,
   "time" timestamp NOT NULL DEFAULT (now()),
   "temperature" float8,
   "humidity" float8,
@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS "oxides" (
   "no2" float8
 );
 
-CREATE TABLE IF NOT EXISTS "hydrides" (
-  "id" uuid PRIMARY KEY,
+CREATE TABLE "hydrides" (
+  "id" SERIAL PRIMARY KEY,
   "time" timestamp NOT NULL DEFAULT (now()),
   "temperature" float8,
   "humidity" float8,
