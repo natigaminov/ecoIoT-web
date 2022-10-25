@@ -1,8 +1,9 @@
 import asyncio
 from fastapi import FastAPI
 from uvicorn import run
+from app.schemas.database import DataBase
 
-from app.utils import init_database
+from app.utils import prepare_dbms
 from app.routers.gases import gases
 from app.settings import settings
 
@@ -13,17 +14,17 @@ app = FastAPI(
 )
 app.include_router(gases)
 
-async def prepare_dbms():
-    await asyncio.gather(
-        init_database(
-            db_name=settings.gases_database_name,
-            db_folder="app/libs/postgresql/gases_database"
-        )
+databases = [
+    DataBase(
+        name=settings.gases_database_name,
+        folder="app/libs/postgresql/gases_database"
     )
-
+]
 
 def main() -> None:
-    asyncio.run(prepare_dbms())
+    asyncio.run(
+        prepare_dbms(databases)
+    )
 
     run(
         app,

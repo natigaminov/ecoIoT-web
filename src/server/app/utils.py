@@ -1,11 +1,13 @@
 import io
 import sys
+import asyncio
 import psycopg2
 from sqlalchemy import create_engine, MetaData
 from sqlacodegen.codegen import CodeGenerator
 
 from app.settings import settings
 from app.libs.postgresql.postgresql import psql
+from app.schemas.database import DataBase
 
 
 def generate_model(db_name: str, outfile: str = None):
@@ -44,3 +46,13 @@ async def init_database(db_name: str, db_folder: str):
         db_name=settings.gases_database_name, 
         outfile=f"{db_folder}/models.py"
     )
+
+async def prepare_dbms(dbs: list[DataBase]):
+    """Инициализирует базы данных в СУБД по заданным параметрам
+    """
+    coros = []
+    for db in dbs:
+        coros.append(
+            init_database(db.name, db.folder)
+        )  
+    await asyncio.gather(*coros)
