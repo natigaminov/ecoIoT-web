@@ -41,4 +41,5 @@ class WaspMote {
     void getMeasurements();
 };
 
+// объявляем внешнее имя заранее созданного объекта класса
 extern WaspMote WPM;
