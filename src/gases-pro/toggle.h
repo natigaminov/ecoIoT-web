@@ -3,7 +3,7 @@
  */
 
 #if true // чтобы было MODEL_BLUE надо поставить false 
-  #define MODEL_GREEN
+    #define MODEL_GREEN
 #else
-  #define MODEL_BLUE
+    #define MODEL_BLUE
 #endif
